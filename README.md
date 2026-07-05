@@ -1,4 +1,4 @@
-# Three D v1.0
+# ThreeD v1.0
 Minimalist 3D model viewer built with Three.js. Focuses on performance, clean UI, and ease of use.
 
 ## Features
