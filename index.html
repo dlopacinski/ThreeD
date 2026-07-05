@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ThreeD | Minimal 3D Viewer</title>
+    <link rel="stylesheet" href="style.css">
+    
+    <script async src="https://unpkg.com/es-module-shims@1.8.0/dist/es-module-shims.js"></script>
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+                "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/",
+                "fflate": "https://unpkg.com/fflate@0.8.1/esm/browser.js"
+            }
+        }
+    </script>
+</head>
+<body data-theme="dark">
+    
+    <div id="app-header">
+        <div id="app-logo">ThreeD<span class="version">v1.0</span></div>
+    </div>
+
+    <div id="stats-panel" class="hidden">
+        <div class="stat-row"><span class="stat-label" data-i18n="statFormat">Format:</span> <span id="stat-format">-</span></div>
+        <div class="stat-row"><span class="stat-label" data-i18n="statSize">Size:</span> <span id="stat-size">-</span></div>
+        <div class="stat-row"><span class="stat-label" data-i18n="statVerts">Vertices:</span> <span id="stat-verts">-</span></div>
+        <div class="stat-row"><span class="stat-label" data-i18n="statFaces">Faces:</span> <span id="stat-faces">-</span></div>
+        <div class="stat-row"><span class="stat-label" data-i18n="statTexture">Textures:</span> <span id="stat-texture">-</span></div>
+    </div>
+
+    <div id="about-modal" class="modal-overlay hidden">
+        <div class="modal-content">
+            <h2 data-i18n="aboutTitle">About ThreeD</h2>
+            <div class="about-text" data-i18n="aboutText">
+                ThreeD is a minimalist, ultra-lightweight web application designed for fast and reliable 3D model viewing. Built purely on open-source web technologies and Three.js, it operates entirely client-side without heavy bundlers or unnecessary frameworks. Drop your assets and inspect them instantly.
+            </div>
+            <button id="close-about" class="btn active" data-i18n="close">Close</button>
+        </div>
+    </div>
+
+    <div id="keymap-modal" class="modal-overlay hidden">
+        <div class="modal-content">
+            <h2 data-i18n="keymapTitle">Keymap & Navigation</h2>
+            <ul class="controls-list">
+                <li><span class="key">LMB</span> <span data-i18n="ctrlSelect">Select Object</span></li>
+                <li><span class="key">MMB</span> <span data-i18n="ctrlRotate">Rotate View</span></li>
+                <li><span class="key">RMB Drag</span> <span data-i18n="ctrlPan">Pan View</span></li>
+                <li><span class="key">Scroll</span> <span data-i18n="ctrlZoomWheel">Zoom In/Out</span></li>
+                <li><span class="key">RMB Click</span> <span data-i18n="ctrlContext">Context Menu</span></li>
+                <li><span class="key">DEL</span> <span data-i18n="ctrlDelete">Delete Active Object</span></li>
+            </ul>
+            <button id="close-keymap" class="btn active" data-i18n="close">Close</button>
+        </div>
+    </div>
+
+    <div id="watermark">ThreeD v1.0 &mdash; Made by Dawid Łopaciński</div>
+
+    <div id="right-actions">
+        <button id="keymap-btn" class="floating-btn icon-btn" title="Keymap">
+            <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="2" y="4" width="20" height="16" rx="2" ry="2"></rect>
+                <line x1="6" y1="8" x2="6.01" y2="8"></line>
+                <line x1="10" y1="8" x2="10.01" y2="8"></line>
+                <line x1="14" y1="8" x2="14.01" y2="8"></line>
+                <line x1="18" y1="8" x2="18.01" y2="8"></line>
+                <line x1="6" y1="12" x2="6.01" y2="12"></line>
+                <line x1="10" y1="12" x2="10.01" y2="12"></line>
+                <line x1="14" y1="12" x2="14.01" y2="12"></line>
+                <line x1="18" y1="12" x2="18.01" y2="12"></line>
+                <line x1="8" y1="16" x2="16" y2="16"></line>
+            </svg>
+        </button>
+        
+        <div class="custom-dropdown" id="lang-dropdown">
+            <button class="floating-btn" id="lang-current">EN</button>
+            <div class="dropdown-options hidden" id="lang-options">
+                <button data-value="en" class="active">EN</button>
+                <button data-value="pl">PL</button>
+                <button data-value="de">DE</button>
+            </div>
+        </div>
+
+        <button id="theme-toggle" class="floating-btn icon-btn" title="Toggle Theme">
+            <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+        </button>
+
+        <button id="about-btn" class="floating-btn icon-btn" title="About">?</button>
+    </div>
+
+    <div id="ui-container">
+        <div class="controls-panel">
+            
+            <div id="drop-zone" class="drop-zone panel-block">
+                <span data-i18n="dropText">Drop 3D model or click</span>
+                <input type="file" id="file-input" accept=".glb,.gltf,.obj,.fbx,.stl" hidden>
+            </div>
+
+            <div class="tools-group panel-block">
+                <div class="buttons-row">
+                    <button id="wireframe-toggle" class="btn" data-i18n="wireframe">Wireframe</button>
+                    <button id="texture-toggle" class="btn active" data-i18n="textures">Textures</button>
+                    <button id="reset-cam-btn" class="btn" data-i18n="resetCam">Reset View</button>
+                </div>
+                
+                <div class="slider-container">
+                    <label data-i18n="light">Light Pos</label>
+                    <input type="range" id="light-slider" class="styled-slider" min="0" max="360" value="180">
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <div id="context-menu" class="context-menu">
+        <button id="ctx-delete" class="context-btn">
+            <span data-i18n="delete">Delete Object</span>
+            <span class="shortcut">DEL</span>
+        </button>
+    </div>
+
+    <div id="canvas-container"></div>
+    <script type="module" src="app.js"></script>
+</body>
+</html>
