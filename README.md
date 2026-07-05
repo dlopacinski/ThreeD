@@ -8,6 +8,8 @@ Minimalist 3D model viewer built with Three.js. Focuses on performance, clean UI
 - **Responsive:** Modern, hardware-inspired UI that adapts to your workflow.
 - **Keymap Guide:** Built-in navigation cheat sheet.
 
+![ThreeD Viewer Preview](preview.png)
+
 ## Navigation
 - **Rotate:** Middle Mouse Button (MMB)
 - **Pan:** Right Mouse Button (RMB) drag
